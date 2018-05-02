@@ -9,7 +9,9 @@ import com.xinsane.wxapp.mapper.UserMapper;
 import com.xinsane.wxapp.pojo.Token;
 import com.xinsane.wxapp.pojo.User;
 import com.xinsane.wxapp.service.UserService;
+import com.xinsane.wxapp.service.transfer.BaseTransfer;
 import com.xinsane.wxapp.service.transfer.TokenTransfer;
+import com.xinsane.wxapp.service.transfer.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByToken(String token) {
+        if (token == null || token.isEmpty())
+            return null;
         return userMapper.getUserByToken(token);
+    }
+
+    @Override
+    public Transfer modifyPasswordByOldPassword(int userId, String oldPassword, String newPassword) {
+        User user = userMapper.getUserById(userId);
+        if (user == null)
+            return new BaseTransfer().setError(404).setMsg("该用户不存在");
+        if (!user.getPassword().equals(oldPassword))
+            return new BaseTransfer().setError(403).setMsg("旧密码错误");
+        int rows = userMapper.modify(new User().setId(user.getId()).setPassword(newPassword));
+        if (rows != 1)
+            return new BaseTransfer().setError(400).setMsg("修改失败");
+        return new BaseTransfer().setError(0);
+    }
+
+    @Override
+    public Transfer modifyUserInfo(User user) {
+        user.setName(null).setPassword(null); // 禁止修改用户名和密码
+        int rows = userMapper.modify(user);
+        if (rows != 1)
+            return new BaseTransfer().setError(400).setMsg("修改失败");
+        return new BaseTransfer().setError(0);
     }
 }

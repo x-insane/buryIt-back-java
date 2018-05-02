@@ -2,8 +2,11 @@ package com.xinsane.wxapp.mapper;
 
 import com.xinsane.wxapp.pojo.Package;
 
+import java.util.List;
+
 public interface PackageMapper {
     Package getPackageById(int id);
+    List<Package> getPackagesByUserId(Integer userId);
     int deletePackage(int id);
     int createFreePackage(Package pack);
     int createFixedPackage(Package pack);

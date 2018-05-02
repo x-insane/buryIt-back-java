@@ -28,6 +28,10 @@
         SELECT * FROM package WHERE id = #{id} AND delete_time IS NULL LIMIT 1
     </select>
 
+    <select id="getPackagesByUserId" resultMap="ResultMap">
+        SELECT * FROM package WHERE user_id = #{userId} AND delete_time IS NULL
+    </select>
+
     <update id="deletePackage">
         UPDATE package SET delete_time = NOW() WHERE id = #{id}
     </update>

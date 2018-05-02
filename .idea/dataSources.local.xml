@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="wxapp@localhost" uuid="2c93bebf-3308-4c5f-970f-35a1994257b6">
+    <data-source name="buryIt@localhost" uuid="2c93bebf-3308-4c5f-970f-35a1994257b6">
       <database-info product="MySQL" version="5.7.19" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.46 ( Revision: 9cc87a48e75c2d2e87c1a293b2862ce651cb256e )">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
@@ -9,7 +9,7 @@
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
       <secret-storage>master_key</secret-storage>
       <user-name>wxapp</user-name>
-      <introspection-schemas>*:wxapp</introspection-schemas>
+      <introspection-schemas>*:buryit</introspection-schemas>
     </data-source>
   </component>
 </project>

@@ -8,6 +8,9 @@ import com.xinsane.wxapp.service.transfer.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class PackageServiceImpl implements PackageService {
 
@@ -16,6 +19,33 @@ public class PackageServiceImpl implements PackageService {
     @Autowired
     public PackageServiceImpl(PackageMapper packageMapper) {
         this.packageMapper = packageMapper;
+    }
+
+    @Override
+    public Package accessPackage(Integer userId, Integer packageId) {
+        if (userId == null || packageId == null)
+            return null;
+        Package pack = packageMapper.getPackageById(packageId);
+        if (pack == null)
+            return null;
+        if (pack.getUserId().equals(userId)) {
+            // TODO: 检查包裹属性，所有者当前是否能访问其内容等
+            return pack;
+        }
+        // TODO: 检查该用户是否为该包裹的关注者，关注着可以查看部分内容
+        return null;
+    }
+
+    @Override
+    public List<Package> listOwnPackages(Integer userId) {
+        if (userId == null)
+            return new ArrayList<>();
+        List<Package> packages = packageMapper.getPackagesByUserId(userId);
+        for (Package pack : packages) {
+            pack.setLatitude(null).setLongitude(null);
+            // TODO: 处理包裹信息隐藏等
+        }
+        return packages;
     }
 
     @Override
@@ -77,7 +107,7 @@ public class PackageServiceImpl implements PackageService {
         int rows = packageMapper.deletePackage(pack.getId());
         if (rows != 1)
             return new BaseTransfer().setError(400).setMsg("删除失败");
-        // TODO：这里添加后续处理事件
+        // TODO：这里添加后续处理事件（通知所有关注者等）
         return new BaseTransfer();
     }
 

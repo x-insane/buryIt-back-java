@@ -37,4 +37,23 @@
         INSERT INTO user_openid (id, openid) VALUE (#{id}, #{openid})
     </insert>
 
+    <update id="modify">
+        UPDATE `user`
+        <set>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="password != null">
+                `password` = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
 </mapper>

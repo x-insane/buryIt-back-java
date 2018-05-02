@@ -9,4 +9,5 @@ public interface UserMapper {
     User getUserByOpenid(String openid);
     int registerByName(User user);
     int createUserOpenidMap(@Param("id") int id, @Param("openid") String openid);
+    int modify(User user);
 }

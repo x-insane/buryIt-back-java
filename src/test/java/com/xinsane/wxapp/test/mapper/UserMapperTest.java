@@ -48,4 +48,14 @@ public class UserMapperTest {
         Assert.assertEquals(1, rows);
     }
 
+    @Test
+    public void testModifyUser() {
+        int rows = userMapper.modify(new User().setId(8)
+                .setName("xinsane")
+                .setPassword("ceshi")
+                .setNickname("xinsane")
+                .setAvatar(""));
+        Assert.assertEquals(1, rows);
+    }
+
 }

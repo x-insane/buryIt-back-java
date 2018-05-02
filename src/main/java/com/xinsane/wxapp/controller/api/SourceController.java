@@ -1,12 +1,12 @@
 package com.xinsane.wxapp.controller.api;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.xinsane.wxapp.controller.api.common.ApiController;
 import com.xinsane.wxapp.pojo.Package;
+import com.xinsane.wxapp.pojo.Source;
 import com.xinsane.wxapp.pojo.User;
 import com.xinsane.wxapp.service.PackageService;
+import com.xinsane.wxapp.service.SourceService;
 import com.xinsane.wxapp.service.UserService;
 import com.xinsane.wxapp.service.transfer.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
 @Controller
-@RequestMapping(value = "/api/package",
+@RequestMapping(value = "/api/source",
         produces = { "application/json;charset=UTF-8" },
         method = RequestMethod.POST)
 @ResponseBody
-public class PackageController extends ApiController {
+public class SourceController extends ApiController {
 
-    private final PackageService packageService;
+    private final SourceService sourceService;
     private final UserService userService;
+    private final PackageService packageService;
 
     @Autowired
-    public PackageController(PackageService packageService, UserService userService) {
-        this.packageService = packageService;
+    public SourceController(SourceService sourceService, UserService userService, PackageService packageService) {
+        this.sourceService = sourceService;
         this.userService = userService;
+        this.packageService = packageService;
     }
 
     @RequestMapping("/create")
@@ -40,7 +40,20 @@ public class PackageController extends ApiController {
         if (user == null)
             return error(100, "授权失败");
         data.setUserId(user.getId());
-        Transfer transfer = packageService.insert(data);
+        Transfer transfer;
+        switch (data.getType()) {
+            case "text":
+                transfer = sourceService.addText(data);
+                break;
+            case "image":
+                transfer = sourceService.addImage(data);
+                break;
+            case "voice":
+                transfer = sourceService.addVoice(data);
+                break;
+            default:
+                return error(400, "无法识别的类型");
+        }
         if (transfer.getError() != 0)
             return error(transfer.getError(), transfer.getMsg());
         JsonObject object = new JsonObject();
@@ -55,7 +68,20 @@ public class PackageController extends ApiController {
         if (user == null)
             return error(100, "授权失败");
         data.setUserId(user.getId());
-        Transfer transfer = packageService.modify(data);
+        Transfer transfer;
+        switch (data.getType()) {
+            case "text":
+                transfer = sourceService.updateText(data);
+                break;
+            case "image":
+                transfer = sourceService.updateImage(data);
+                break;
+            case "voice":
+                transfer = sourceService.updateVoice(data);
+                break;
+            default:
+                return error(400, "无法识别的类型");
+        }
         if (transfer.getError() != 0)
             return error(transfer.getError(), transfer.getMsg());
         return ok();
@@ -67,7 +93,7 @@ public class PackageController extends ApiController {
         if (user == null)
             return error(100, "授权失败");
         data.setUserId(user.getId());
-        Transfer transfer = packageService.delete(data);
+        Transfer transfer = sourceService.deleteSource(data);
         if (transfer.getError() != 0)
             return error(transfer.getError(), transfer.getMsg());
         return ok();
@@ -78,19 +104,17 @@ public class PackageController extends ApiController {
         User user = userService.getUserByToken(data.token);
         if (user == null)
             return error(100, "授权失败");
-        data.setUserId(user.getId());
         JsonElement array = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create()
-                .toJsonTree(packageService.listOwnPackages(user.getId()));
+                .toJsonTree(sourceService.getByPackageId(data.getPackageId()));
         JsonObject object = new JsonObject();
         object.addProperty("error", 0);
-        object.add("packages", array);
+        object.add("sources", array);
         return object.toString();
     }
 
-    static class RequestData extends Package {
+    static class RequestData extends Source {
         String token;
     }
-
 }

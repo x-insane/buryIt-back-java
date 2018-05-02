@@ -2,8 +2,10 @@ package com.xinsane.wxapp.controller.api;
 
 import com.google.gson.JsonObject;
 import com.xinsane.wxapp.controller.api.common.ApiController;
+import com.xinsane.wxapp.pojo.User;
 import com.xinsane.wxapp.service.UserService;
 import com.xinsane.wxapp.service.transfer.TokenTransfer;
+import com.xinsane.wxapp.service.transfer.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/api/user",
+@RequestMapping(value = "/api/user/wx",
         produces = { "application/json;charset=UTF-8" },
         method = RequestMethod.POST)
 @ResponseBody
@@ -25,8 +27,8 @@ public class UserController extends ApiController {
         this.userService = userService;
     }
 
-    @RequestMapping("/wxlogin")
-    public String wxlogin(@RequestBody RequestData data) {
+    @RequestMapping("/login")
+    public String login(@RequestBody RequestData data) {
         if (data.code == null || data.code.isEmpty())
             return error(101, "缺少参数");
         TokenTransfer transfer = userService.loginByWxCode(data.code);
@@ -38,7 +40,19 @@ public class UserController extends ApiController {
         return obj.toString();
     }
 
-    static class RequestData {
+    @RequestMapping("/modify-info")
+    public String modify(@RequestBody RequestData data) {
+        User user = userService.getUserByToken(data.token);
+        if (user == null)
+            return error(100, "授权失败");
+        data.setId(user.getId());
+        Transfer transfer = userService.modifyUserInfo(data);
+        if (transfer.getError() != 0)
+            return error(transfer.getError(), transfer.getMsg());
+        return ok();
+    }
+
+    static class RequestData extends User {
         String code;
         String token;
         public void setCode(String code) {

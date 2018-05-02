@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="wxapp@localhost">
+<dataSource name="buryIt@localhost">
   <database-model serializer="dbm" rdbms="MYSQL" format-version="4.7">
     <root id="1">
       <DefaultCasing>lower/lower</DefaultCasing>
     </root>
-    <schema id="2" parent="1" name="information_schema">
-      <Collation>utf8_general_ci</Collation>
-    </schema>
-    <schema id="3" parent="1" name="wxapp">
+    <schema id="2" parent="1" name="buryit">
       <Current>1</Current>
       <Visible>1</Visible>
       <Collation>utf8_bin</Collation>
+    </schema>
+    <schema id="3" parent="1" name="information_schema">
+      <Collation>utf8_general_ci</Collation>
     </schema>
     <collation id="4" parent="1" name="armscii8_bin">
       <Charset>armscii8</Charset>
@@ -900,38 +900,38 @@
       <Charset>utf8mb4</Charset>
       <DefaultForCharset>0</DefaultForCharset>
     </collation>
-    <table id="226" parent="3" name="data">
+    <table id="226" parent="2" name="data">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="227" parent="3" name="data_image">
+    <table id="227" parent="2" name="data_image">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="228" parent="3" name="data_text">
+    <table id="228" parent="2" name="data_text">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="229" parent="3" name="data_voice">
+    <table id="229" parent="2" name="data_voice">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="230" parent="3" name="event">
+    <table id="230" parent="2" name="event">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="231" parent="3" name="event_notification">
+    <table id="231" parent="2" name="event_notification">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="232" parent="3" name="package">
+    <table id="232" parent="2" name="package">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="233" parent="3" name="package_user">
+    <table id="233" parent="2" name="package_user">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="234" parent="3" name="token_openid">
+    <table id="234" parent="2" name="token_openid">
       <Comment>openid用户所使用的token表，含有用户openid和session_key和session数据等信息</Comment>
       <Engine>MyISAM</Engine>
     </table>
-    <table id="235" parent="3" name="user">
+    <table id="235" parent="2" name="user">
       <Engine>MyISAM</Engine>
     </table>
-    <table id="236" parent="3" name="user_openid">
+    <table id="236" parent="2" name="user_openid">
       <Comment>使用openid的用户与用户id的对应表</Comment>
       <Engine>MyISAM</Engine>
     </table>
@@ -959,10 +959,9 @@
     </column>
     <column id="240" parent="226" name="package_id">
       <Position>4</Position>
-      <Comment>所属包的id，默认0表示尚未打包，打包之后将不再允许修改</Comment>
+      <Comment>所属包的id，创建后不允许修改</Comment>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
-      <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="241" parent="226" name="create_time">
@@ -973,148 +972,142 @@
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="242" parent="226" name="update_time">
+    <column id="242" parent="226" name="delete_time">
       <Position>6</Position>
-      <Comment>修改时间</Comment>
-      <DataType>timestamp|0s</DataType>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <column id="243" parent="226" name="delete_time">
-      <Position>7</Position>
       <Comment>删除时间</Comment>
       <DataType>timestamp|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="244" parent="226" name="PRIMARY">
+    <key id="243" parent="226" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="245" parent="227" name="id">
+    <column id="244" parent="227" name="id">
       <Position>1</Position>
       <Comment>与data表中的id对应</Comment>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="246" parent="227" name="image_url">
+    <column id="245" parent="227" name="image_url">
       <Position>2</Position>
       <Comment>图片url，最多65535字</Comment>
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="247" parent="227" name="PRIMARY">
+    <key id="246" parent="227" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="248" parent="228" name="id">
+    <column id="247" parent="228" name="id">
       <Position>1</Position>
       <Comment>与data表中的id对应</Comment>
       <DataType>int(11) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="249" parent="228" name="content">
+    <column id="248" parent="228" name="content">
       <Position>2</Position>
       <Comment>纯文本内容，可换行，最多不超过65535字</Comment>
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="250" parent="228" name="PRIMARY">
+    <key id="249" parent="228" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="251" parent="229" name="id">
+    <column id="250" parent="229" name="id">
       <Position>1</Position>
       <Comment>与data表中的id对应</Comment>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="252" parent="229" name="voice_path">
+    <column id="251" parent="229" name="voice_url">
       <Position>2</Position>
       <Comment>录音url，最多65535字</Comment>
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="253" parent="229" name="PRIMARY">
+    <key id="252" parent="229" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="254" parent="230" name="id">
+    <column id="253" parent="230" name="id">
       <Position>1</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="255" parent="230" name="package_id">
+    <column id="254" parent="230" name="package_id">
       <Position>2</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="256" parent="230" name="type">
+    <column id="255" parent="230" name="type">
       <Position>3</Position>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="257" parent="230" name="time">
+    <column id="256" parent="230" name="time">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="258" parent="230" name="package_id">
+    <index id="257" parent="230" name="package_id">
       <ColNames>package_id</ColNames>
     </index>
-    <key id="259" parent="230" name="PRIMARY">
+    <key id="258" parent="230" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="260" parent="231" name="id">
+    <column id="259" parent="231" name="id">
       <Position>1</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="261" parent="231" name="user_id">
+    <column id="260" parent="231" name="user_id">
       <Position>2</Position>
       <Comment>要通知的用户id</Comment>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="262" parent="231" name="event_id">
+    <column id="261" parent="231" name="event_id">
       <Position>3</Position>
       <Comment>与之关联的事件id</Comment>
       <DataType>int(11) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="263" parent="231" name="data">
+    <column id="262" parent="231" name="data">
       <Position>4</Position>
       <Comment>通知数据</Comment>
       <DataType>json|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="264" parent="231" name="status">
+    <column id="263" parent="231" name="status">
       <Position>5</Position>
       <Comment>该通知的状态</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="265" parent="231" name="create_time">
+    <column id="264" parent="231" name="create_time">
       <Position>6</Position>
       <Comment>通知创建的时间</Comment>
       <DataType>timestamp|0s</DataType>
@@ -1122,45 +1115,45 @@
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="266" parent="231" name="user_id">
+    <index id="265" parent="231" name="user_id">
       <ColNames>user_id</ColNames>
     </index>
-    <index id="267" parent="231" name="event_id">
+    <index id="266" parent="231" name="event_id">
       <ColNames>event_id</ColNames>
     </index>
-    <key id="268" parent="231" name="PRIMARY">
+    <key id="267" parent="231" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="269" parent="232" name="id">
+    <column id="268" parent="232" name="id">
       <Position>1</Position>
       <DataType>int(11) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="270" parent="232" name="user_id">
+    <column id="269" parent="232" name="user_id">
       <Position>2</Position>
       <Comment>创建者的用户id</Comment>
       <DataType>int(11) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="271" parent="232" name="title">
+    <column id="270" parent="232" name="title">
       <Position>3</Position>
       <Comment>必须，255字以内标题，拆开前可见</Comment>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="272" parent="232" name="data_cache">
+    <column id="271" parent="232" name="data_cache">
       <Position>4</Position>
       <Comment>打包后对内容的缓存，以免每次查很多表</Comment>
       <DataType>json|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="273" parent="232" name="real_mode">
+    <column id="272" parent="232" name="real_mode">
       <Position>5</Position>
       <Comment>真实模式，默认开启，真实模式下，只有在现实中走到对应位置附近才能取包裹</Comment>
       <DataType>tinyint(1)|0s</DataType>
@@ -1168,14 +1161,14 @@
       <DefaultExpression>&apos;1&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="274" parent="232" name="type">
+    <column id="273" parent="232" name="type">
       <Position>6</Position>
       <Comment>包裹类型，即循环方式，仅限free、private、fixed中的一种</Comment>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="275" parent="232" name="package_total_num">
+    <column id="274" parent="232" name="package_total_num">
       <Position>7</Position>
       <Comment>定点模式下包裹总数量，该值为0时不限制数量，为n表示可以被除创建者外的n人挖取</Comment>
       <DataType>int(11) unsigned|0s</DataType>
@@ -1183,7 +1176,7 @@
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="276" parent="232" name="package_open_num">
+    <column id="275" parent="232" name="package_open_num">
       <Position>8</Position>
       <Comment>定点模式下被挖取的数量</Comment>
       <DataType>int(11) unsigned|0s</DataType>
@@ -1191,43 +1184,43 @@
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="277" parent="232" name="cycle_time">
+    <column id="276" parent="232" name="cycle_time">
       <Position>9</Position>
       <Comment>自由模式下的循环周期，单位秒，挖到者必须在规定时间内重新埋下，否则回到上个埋下位置，其他人可以再次挖出</Comment>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="278" parent="232" name="description">
+    <column id="277" parent="232" name="description">
       <Position>10</Position>
       <Comment>可选，255字以内简单描述，拆开前可见</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="279" parent="232" name="sender">
+    <column id="278" parent="232" name="sender">
       <Position>11</Position>
       <Comment>可选额外信息，展示的发方名字，255字以内</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="280" parent="232" name="receiver">
+    <column id="279" parent="232" name="receiver">
       <Position>12</Position>
       <Comment>可选额外信息，展示的收方名字，255字以内</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="281" parent="232" name="longitude">
+    <column id="280" parent="232" name="longitude">
       <Position>13</Position>
       <Comment>当前位置经度</Comment>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="282" parent="232" name="latitude">
+    <column id="281" parent="232" name="latitude">
       <Position>14</Position>
       <Comment>当前位置纬度</Comment>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="283" parent="232" name="deep">
+    <column id="282" parent="232" name="deep">
       <Position>15</Position>
       <Comment>可选深度，默认为0，可输入0-1000，正确填写深度才能找到这个包</Comment>
       <DataType>int(10) unsigned|0s</DataType>
@@ -1235,13 +1228,13 @@
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="284" parent="232" name="password">
+    <column id="283" parent="232" name="password">
       <Position>16</Position>
       <Comment>可选密码，默认为NULL，加密之后，在用户拿到这个包后，只有输入正确的密码才能看到包内的数据</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="285" parent="232" name="create_time">
+    <column id="284" parent="232" name="create_time">
       <Position>17</Position>
       <Comment>第一次创建的时间，此时包内还没有数据</Comment>
       <DataType>timestamp|0s</DataType>
@@ -1249,110 +1242,110 @@
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="286" parent="232" name="publish_time">
+    <column id="285" parent="232" name="publish_time">
       <Position>18</Position>
       <Comment>打包的时间，一旦该值不为NULL，将不允许再修改</Comment>
       <DataType>timestamp|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="287" parent="232" name="can_open_time">
+    <column id="286" parent="232" name="can_open_time">
       <Position>19</Position>
       <Comment>能够打开的时间，若设置了该值，在此时间之前，不可以挖出</Comment>
       <DataType>timestamp|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="288" parent="232" name="delete_time">
+    <column id="287" parent="232" name="delete_time">
       <Position>20</Position>
       <Comment>删除时间，一旦该值不为NULL，将对所有用户不可见，只有创建者能够删除</Comment>
       <DataType>timestamp|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="289" parent="232" name="PRIMARY">
+    <key id="288" parent="232" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="290" parent="233" name="id">
+    <column id="289" parent="233" name="id">
       <Position>1</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="291" parent="233" name="package_id">
+    <column id="290" parent="233" name="package_id">
       <Position>2</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="292" parent="233" name="user_id">
+    <column id="291" parent="233" name="user_id">
       <Position>3</Position>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="293" parent="233" name="package_id">
+    <index id="292" parent="233" name="package_id">
       <ColNames>package_id</ColNames>
     </index>
-    <index id="294" parent="233" name="user_id">
+    <index id="293" parent="233" name="user_id">
       <ColNames>user_id</ColNames>
     </index>
-    <key id="295" parent="233" name="PRIMARY">
+    <key id="294" parent="233" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="296" parent="234" name="id">
+    <column id="295" parent="234" name="id">
       <Position>1</Position>
       <DataType>int(11) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="297" parent="234" name="token">
+    <column id="296" parent="234" name="token">
       <Position>2</Position>
       <DataType>char(32)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="298" parent="234" name="openid">
+    <column id="297" parent="234" name="openid">
       <Position>3</Position>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="299" parent="234" name="session_key">
+    <column id="298" parent="234" name="session_key">
       <Position>4</Position>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="300" parent="234" name="data">
+    <column id="299" parent="234" name="data">
       <Position>5</Position>
       <DataType>json|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="301" parent="234" name="create_time">
+    <column id="300" parent="234" name="create_time">
       <Position>6</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="302" parent="234" name="token">
+    <index id="301" parent="234" name="token">
       <ColNames>token</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="303" parent="234" name="PRIMARY">
+    <key id="302" parent="234" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="304" parent="234" name="token">
+    <key id="303" parent="234" name="token">
       <ColNames>token</ColNames>
       <UnderlyingIndexName>token</UnderlyingIndexName>
     </key>
-    <column id="305" parent="235" name="id">
+    <column id="304" parent="235" name="id">
       <Position>1</Position>
       <Comment>用户id</Comment>
       <DataType>int(11) unsigned|0s</DataType>
@@ -1360,31 +1353,32 @@
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="306" parent="235" name="name">
+    <column id="305" parent="235" name="name">
       <Position>2</Position>
-      <Comment>用户名，若不是NULL，则不允许重复，openid用户无需设置</Comment>
-      <DataType>tinytext|0s</DataType>
+      <Comment>用户名，微信用户初始为16位随机字符串</Comment>
+      <DataType>varchar(32)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="307" parent="235" name="password">
+    <column id="306" parent="235" name="password">
       <Position>3</Position>
       <Comment>用户密码，openid用户无需设置</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="308" parent="235" name="nickname">
+    <column id="307" parent="235" name="nickname">
       <Position>4</Position>
       <Comment>用户昵称</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="309" parent="235" name="avatar">
+    <column id="308" parent="235" name="avatar">
       <Position>5</Position>
       <Comment>用户头像地址</Comment>
       <DataType>tinytext|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="310" parent="235" name="create_time">
+    <column id="309" parent="235" name="create_time">
       <Position>6</Position>
       <Comment>用户注册时间</Comment>
       <DataType>timestamp|0s</DataType>
@@ -1392,33 +1386,41 @@
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="311" parent="235" name="update_time">
+    <column id="310" parent="235" name="update_time">
       <Position>7</Position>
       <Comment>用户信息更新时间</Comment>
       <DataType>timestamp|0s</DataType>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+    <index id="311" parent="235" name="name">
+      <ColNames>name</ColNames>
+      <Unique>1</Unique>
+    </index>
     <key id="312" parent="235" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="313" parent="236" name="id">
+    <key id="313" parent="235" name="name">
+      <ColNames>name</ColNames>
+      <UnderlyingIndexName>name</UnderlyingIndexName>
+    </key>
+    <column id="314" parent="236" name="id">
       <Position>1</Position>
       <Comment>与user表中用户id对应</Comment>
       <DataType>int(10) unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="314" parent="236" name="openid">
+    <column id="315" parent="236" name="openid">
       <Position>2</Position>
       <Comment>微信用户openid</Comment>
       <DataType>tinytext|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="315" parent="236" name="PRIMARY">
+    <key id="316" parent="236" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
