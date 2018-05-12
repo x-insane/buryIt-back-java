@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinsane.buryit.mapper.SourceMapper">
+
+    <resultMap id="ResultMap" type="com.xinsane.buryit.pojo.Source">
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="package_id" jdbcType="INTEGER" property="packageId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+        <result column="content" jdbcType="VARCHAR" property="text"/>
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+        <result column="voice_url" jdbcType="VARCHAR" property="voiceUrl"/>
+    </resultMap>
+    
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `data` (user_id, type, package_id)
+                VALUE (#{userId}, #{type}, #{packageId});
+    </insert>
+
+    <insert id="insertText">
+        INSERT INTO data_text (id, content)
+                VALUE (#{id}, #{text});
+    </insert>
+
+    <insert id="insertImage">
+        INSERT INTO data_image (id, image_url)
+            VALUE (#{id}, #{imageUrl});
+    </insert>
+
+    <insert id="insertVoice">
+        INSERT INTO data_voice (id, voice_url)
+            VALUE (#{id}, #{voiceUrl});
+    </insert>
+
+    <update id="updateText">
+        UPDATE `data`
+            LEFT JOIN data_text ON data_text.id = #{id}
+        SET content = #{text}
+        WHERE `data`.id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <update id="updateImage">
+        UPDATE `data`
+            LEFT JOIN data_image ON data_image.id = #{id}
+        SET image_url = #{imageUrl}
+        WHERE `data`.id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <update id="updateVoice">
+        UPDATE `data`
+            LEFT JOIN data_voice ON data_voice.id = #{id}
+        SET voice_url = #{voiceUrl}
+        WHERE `data`.id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <update id="delete">
+        UPDATE `data` SET delete_time = NOW()
+        WHERE id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <select id="getSourceById" resultMap="ResultMap">
+        SELECT `data`.*, data_text.content, data_image.image_url, data_voice.voice_url FROM `data`
+            LEFT JOIN data_text ON data_text.id = #{id}
+            LEFT JOIN data_image ON data_image.id = #{id}
+            LEFT JOIN data_voice ON data_voice.id = #{id}
+        WHERE `data`.id = #{id} AND delete_time IS NULL;
+    </select>
+
+    <select id="getSourcesByPackageId" resultMap="ResultMap">
+        SELECT `data`.id, `data`.type, `data`.create_time,
+            data_text.content, data_image.image_url, data_voice.voice_url FROM `data`
+            LEFT JOIN data_text ON data_text.id = `data`.id
+            LEFT JOIN data_image ON data_image.id = `data`.id
+            LEFT JOIN data_voice ON data_voice.id = `data`.id
+        WHERE `data`.package_id = #{packageId} AND delete_time IS NULL;
+    </select>
+
+</mapper>

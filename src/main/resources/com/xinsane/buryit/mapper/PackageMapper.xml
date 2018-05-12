@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinsane.buryit.mapper.PackageMapper">
+
+    <resultMap id="ResultMap" type="com.xinsane.buryit.pojo.Package">
+        <id property="id" column="id" jdbcType="INTEGER" />
+        <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="owner_id" jdbcType="INTEGER" property="ownerId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="real_mode" jdbcType="BIT" property="realMode" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="package_total_num" jdbcType="INTEGER" property="packageTotalNum" />
+        <result column="package_open_num" jdbcType="INTEGER" property="packageOpenNum" />
+        <result column="cycle_time" jdbcType="INTEGER" property="cycleTime" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="sender" jdbcType="VARCHAR" property="sender" />
+        <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+        <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+        <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+        <result column="deep" jdbcType="INTEGER" property="deep" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime" />
+        <result column="can_open_time" jdbcType="TIMESTAMP" property="canOpenTime" />
+        <result column="free_deadline" jdbcType="TIMESTAMP" property="freeDeadline" />
+        <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+    </resultMap>
+
+    <select id="getPackageById" resultMap="ResultMap">
+        SELECT * FROM package WHERE id = #{id} AND delete_time IS NULL LIMIT 1;
+    </select>
+
+    <select id="listOwnPackages" resultMap="ResultMap">
+        SELECT id, real_mode, type, title, description, sender, receiver, create_time, publish_time, password,
+            cycle_time, package_total_num, package_open_num
+        FROM package
+        WHERE user_id = #{userId} AND delete_time IS NULL;
+    </select>
+
+    <select id="listWatchPackages" resultMap="ResultMap">
+        SELECT package.id, real_mode, type, title, description, sender, receiver, create_time,
+            IF(password IS NULL, TRUE, FALSE) AS noPassword,
+            access AS canAccess
+        FROM package
+            RIGHT JOIN package_user
+                ON package_user.user_id = #{userId}
+                   AND package_user.package_id = package.id
+        WHERE delete_time IS NULL;
+    </select>
+
+    <select id="isWatching" resultType="boolean">
+        SELECT IF(COUNT(id) > 0, TRUE, FALSE)
+        FROM package_user
+        WHERE package_id = #{packageId} AND user_id = #{userId};
+    </select>
+
+    <select id="canAccessContent" resultType="boolean">
+        SELECT IF(COUNT(id) > 0, TRUE, FALSE)
+        FROM package_user
+        WHERE package_id = #{packageId} AND user_id = #{userId} AND access = TRUE;
+    </select>
+
+    <update id="accessContent">
+        UPDATE package_user SET access = TRUE
+        WHERE package_id = #{packageId} AND user_id = #{userId};
+    </update>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO package (uuid, user_id, owner_id, title, real_mode, description, sender, receiver)
+            VALUE (UUID(), #{userId}, #{userId}, #{title}, #{realMode}, #{description}, #{sender}, #{receiver});
+    </insert>
+
+    <update id="modify">
+        UPDATE package
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="realMode != null">
+                real_mode = #{realMode},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="sender != null">
+                sender = #{sender},
+            </if>
+            <if test="receiver != null">
+                receiver = #{receiver},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+        UPDATE package SET delete_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="buryFreePackage">
+        UPDATE package SET
+            type = 'free',
+            publish_time = NOW(),
+            latitude = #{latitude},
+            longitude = #{longitude},
+            deep = #{deep},
+            password = #{password},
+            cycle_time = #{cycleTime}
+        WHERE id = #{id}
+              AND delete_time IS NULL
+              AND type IS NULL;
+    </update>
+
+    <update id="buryFixedPackage">
+        UPDATE package SET
+            type = 'fixed',
+            publish_time = NOW(),
+            latitude = #{latitude},
+            longitude = #{longitude},
+            deep = #{deep},
+            password = #{password},
+            package_total_num = #{packageTotalNum},
+            package_open_num = 0
+        WHERE id = #{id}
+              AND delete_time IS NULL
+              AND type IS NULL;
+    </update>
+
+    <update id="buryPrivatePackage">
+        UPDATE package SET
+            type = 'private',
+            publish_time = NOW(),
+            latitude = #{latitude},
+            longitude = #{longitude},
+            deep = #{deep},
+            password = #{password}
+        WHERE id = #{id}
+              AND delete_time IS NULL
+              AND type IS NULL;
+    </update>
+
+    <select id="queryWithCircle" resultMap="ResultMap">
+        SELECT id,
+            <if test="distance == 100">
+                uuid,
+            </if>
+            type, real_mode, title, description, sender, receiver, create_time
+        FROM package
+        WHERE publish_time IS NOT NULL
+              AND delete_time IS NULL
+              AND free_deadline IS NULL
+              AND deep = #{pack.deep}
+              AND (    type = 'free'
+                   OR (type = 'fixed' AND package_open_num <![CDATA[ < ]]> package_total_num)
+                   OR (type = 'private' AND user_id = #{pack.userId})
+              )
+              AND ROUND(6378.138 * 2 *
+                      ASIN(
+                          SQRT(
+                              SIN((latitude - #{pack.latitude}) * PI() / 360)
+                                  * SIN((latitude - #{pack.latitude}) * PI() / 360) +
+                              COS(latitude * PI() / 180) * COS(#{pack.latitude} * PI() / 180) *
+                              SIN((longitude - #{pack.longitude}) *PI() / 360)
+                                  * SIN((longitude - #{pack.longitude}) *PI() / 360)
+                          )
+                      ) * 1000
+                  ) <![CDATA[ <= ]]> #{distance};
+    </select>
+
+    <update id="clearPosition">
+        UPDATE package
+        SET latitude = NULL,
+            longitude = NULL,
+            deep = 0,
+            publish_time = NULL
+        WHERE id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <update id="changeOwner">
+        UPDATE package
+        SET owner_id = #{userId}
+        WHERE id = #{id} AND delete_time IS NULL;
+    </update>
+
+    <update id="increaseFixedOpenNum">
+        UPDATE package
+        SET package_open_num = package_open_num + 1
+        WHERE id = #{id} AND type = 'fixed' ANd delete_time IS NULL;
+    </update>
+
+    <select id="listWatchers" resultType="com.xinsane.buryit.pojo.User">
+        SELECT user_id AS id FROM package_user WHERE package_id = #{packageId};
+    </select>
+
+    <insert id="addWatcher">
+        INSERT package_user (package_id, user_id)
+            VALUE (#{id}, #{userId});
+    </insert>
+
+    <update id="reburyFreePackage">
+        UPDATE package
+        SET owner_id = user_id,
+            latitude = #{latitude},
+            longitude = #{longitude},
+            deep = #{deep},
+            publish_time = NOW(),
+            free_deadline = NULL
+        WHERE id = #{id}
+              AND owner_id = #{userId}
+              AND type = 'free'
+              AND free_deadline IS NOT NULL
+              AND delete_time IS NULL;
+    </update>
+
+    <update id="scheduledFreePackageReset">
+        UPDATE package
+        SET free_deadline = #{freeDeadline}
+        WHERE id = #{id}
+              AND type = 'free'
+              AND delete_time IS NULL;
+    </update>
+
+    <select id="getOverdueFreePackages" resultMap="ResultMap">
+        SELECT * FROM package
+        WHERE free_deadline IS NOT NULL
+              AND free_deadline <![CDATA[ >= ]]> NOW()
+              AND delete_time IS NULL;
+    </select>
+
+    <update id="resetOverdueFreePackages">
+        UPDATE package
+        SET free_deadline = NULL,
+            owner_id = user_id
+        WHERE type = 'free'
+              AND free_deadline <![CDATA[ >= ]]> NOW()
+              AND delete_time IS NULL;
+    </update>
+
+</mapper>

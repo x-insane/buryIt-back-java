@@ -8,6 +8,6 @@
         <setting name="logImpl" value="LOG4J2"/>
     </settings>
     <typeAliases>
-        <package name="com.xinsane.wxapp.pojo"/>
+        <package name="com.xinsane.buryit.pojo"/>
     </typeAliases>
 </configuration>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinsane.buryit.mapper.NotificationMapper">
+
+    <select id="list" resultType="com.xinsane.buryit.pojo.EventNotification">
+        SELECT event_notification.*,
+            type, time AS createTime, data
+        FROM event_notification
+            LEFT JOIN `event` ON eventId = `event`.id
+        WHERE userId = #{userId}
+              AND event_notification.id > #{lastId}
+              AND deleteTime IS NULL
+              AND time IS NOT NULL;
+    </select>
+
+    <insert id="insert">
+        INSERT INTO event_notification (userId, eventId)
+            VALUE (#{userId}, #{eventId});
+    </insert>
+
+</mapper>
